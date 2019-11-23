@@ -14,7 +14,7 @@ clean:
 	find . -name \__pycache__ -delete
 
 lint:
-	flake8 npml/ tests/
+	flake8 npml/ tests/ --show-source --statistics
 
 test:
 	pip install tox
