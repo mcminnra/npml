@@ -1,7 +1,11 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 
+
 class KNeighborsClassifier:
-    """Classifier implementing the k-nearest neighbors vote.
+    """
+    Classifier implementing the k-nearest neighbors vote.
 
     Implements a brute force approach
 
@@ -12,7 +16,6 @@ class KNeighborsClassifier:
 
     Notes
     -----
-
     https://en.wikipedia.org/wiki/K-nearest_neighbor_algorithm
     """
 
@@ -20,7 +23,8 @@ class KNeighborsClassifier:
         self.neighbors = neighbors
 
     def fit(self, X_train, y_train):
-        """Fit model to training data
+        """
+        Fit model to training data
 
         Basically saves the train data to the class to be used by predict
 
@@ -39,13 +43,14 @@ class KNeighborsClassifier:
             try:
                 # try to convert to ndarray
                 self.y_train = y_train.values.ravel()
-            except:
+            except Exception:
                 raise Exception("Error - Couldn't convert to ndarray")
 
         return self
 
     def predict(self, X_test):
-        """Predict the class labels for the provided data
+        """
+        Predict the class labels for the provided data
 
         Parameters
         ----------

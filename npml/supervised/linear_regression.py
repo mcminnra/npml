@@ -1,9 +1,12 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 from npml.util.metrics import mean_squared_error
 
 
 class LinearRegression:
-    """Classifier implementing simple linear regression
+    """
+    Classifier implementing simple linear regression
 
     Uses a batch gradient descent optimization approach
 
@@ -20,20 +23,24 @@ class LinearRegression:
 
         None   = Normal Gradient Descent Update
         "Adam" = Adam Optimization
-
     tol : float, optional (default = 1e-3)
-        The stopping criterion. If it is not None, the iterations will stop when (loss > previous_loss - tol).
+        The stopping criterion. If it is not None, the iterations will stop
+        when (loss > previous_loss - tol).
 
     verbose : int, optional (default = 0)
         Any number larger than 0 prints actions verbosely
 
     Notes
     -----
-
     https://en.wikipedia.org/wiki/Linear_regression
     """
 
-    def __init__(self, fit_intercept=True, learning_rate=5e-5, optimization=None, tol=0, verbose=0):
+    def __init__(self,
+                 fit_intercept=True,
+                 learning_rate=5e-5,
+                 optimization=None,
+                 tol=0,
+                 verbose=0):
         self.fit_intercept = fit_intercept
         self.learning_rate = learning_rate
         self.optimization = optimization
@@ -58,7 +65,7 @@ class LinearRegression:
             try:
                 # try to convert to ndarray
                 target = target.values.ravel()
-            except:
+            except Exception:
                 print("Error - Couldn't convert to ndarray")
                 raise
 
@@ -72,10 +79,13 @@ class LinearRegression:
         # Initialize weights
         self.weights = np.zeros(features.shape[1])
         if self.optimization == 'Adam':
-            m_weights = np.zeros_like(self.weights)  # first-moment vector Adam Optimization for W1
-            v_weights = np.zeros_like(self.weights)  # second-moment vector Adam Optimization for W1
+            # first-moment vector Adam Optimization for W1
+            m_weights = np.zeros_like(self.weights)
+            # second-moment vector Adam Optimization for W1
+            v_weights = np.zeros_like(self.weights)
 
-        previous_loss = 100000  # Initialize Previous loss to a arbitrary high number to check for stopping
+        # Initialize Previous loss to a arbitrary high number to check for stopping
+        previous_loss = 100000
         stop = False
         iteration = 0
 
@@ -94,9 +104,11 @@ class LinearRegression:
                 beta1 = 0.9
                 beta2 = 0.999
                 eps = 1E-8
-                # Update weights by using Adam Optimization (as opposed to simply learning_rate * gradient)
+                # Update weights by using Adam Optimization
+                # (as opposed to simply learning_rate * gradient)
                 # https://arxiv.org/pdf/1412.6980.pdf
-                # http://cs231n.github.io/neural-networks-3/ (See Section: Per-parameter adaptive learning rate methods)
+                # http://cs231n.github.io/neural-networks-3/
+                # (See Section: Per-parameter adaptive learning rate methods)
                 m_weights = beta1 * m_weights + (1 - beta1) * gradient
                 mt_weights = m_weights / (1 - beta1 ** iteration)
                 v_weights = beta2 * v_weights + (1 - beta2) * (gradient ** 2)
@@ -162,18 +174,24 @@ class RidgeRegression:
         "Adam" = Adam Optimization
 
     tol : float, optional (default = 1e-3)
-        The stopping criterion. If it is not None, the iterations will stop when (loss > previous_loss - tol).
+        The stopping criterion. If it is not None, the iterations will stop when
+        (loss > previous_loss - tol).
 
     verbose : int, optional (default = 0)
         Any number larger than 0 prints actions verbosely
 
     Notes
     -----
-
     https://en.wikipedia.org/wiki/Linear_regression
     """
 
-    def __init__(self, fit_intercept=True, learning_rate=5e-5, alpha=.0001,  optimization=None, tol=0, verbose=0):
+    def __init__(self,
+                 fit_intercept=True,
+                 learning_rate=5e-5,
+                 alpha=.0001,
+                 optimization=None,
+                 tol=0,
+                 verbose=0):
         self.fit_intercept = fit_intercept
         self.learning_rate = learning_rate
         self.alpha = alpha
@@ -184,7 +202,8 @@ class RidgeRegression:
         self.weights = []
 
     def fit(self, features, target):
-        """Fit model to training data
+        """
+        Fit model to training data
 
         Parameters
         ----------
@@ -199,7 +218,7 @@ class RidgeRegression:
             try:
                 # try to convert to ndarray
                 target = target.values.ravel()
-            except:
+            except Exception:
                 print("Error - Couldn't convert to ndarray")
                 raise
 
@@ -213,10 +232,13 @@ class RidgeRegression:
         # Initialize weights
         self.weights = np.zeros(features.shape[1])
         if self.optimization == 'Adam':
-            m_weights = np.zeros_like(self.weights)  # first-moment vector Adam Optimization for W1
-            v_weights = np.zeros_like(self.weights)  # second-moment vector Adam Optimization for W1
+            # first-moment vector Adam Optimization for W1
+            m_weights = np.zeros_like(self.weights)
+            # second-moment vector Adam Optimization for W1
+            v_weights = np.zeros_like(self.weights)
 
-        previous_loss = 100000  # Initialize Previous loss to a arbitrary high number to check for stopping
+        # Initialize Previous loss to a arbitrary high number to check for stopping
+        previous_loss = 100000
         stop = False
         iteration = 0
 
@@ -226,8 +248,10 @@ class RidgeRegression:
             predictions = np.dot(features, self.weights)
 
             # Compute gradient
-            # The gradient for Ridge Regression is the derivative of Mean Squared Error + regularization term
-            gradient = (-1 / m) * np.dot(features.T, target - predictions)  + 2 * self.alpha * self. weights
+            # The gradient for Ridge Regression is the derivative of
+            # Mean Squared Error + regularization term
+            gradient = (-1 / m) * np.dot(features.T, target - predictions) + \
+                2 * self.alpha * self.weights
 
             # Update Weights
             if self.optimization == 'Adam':
@@ -235,9 +259,11 @@ class RidgeRegression:
                 beta1 = 0.9
                 beta2 = 0.999
                 eps = 1E-8
-                # Update weights by using Adam Optimization (as opposed to simply learning_rate * gradient)
+                # Update weights by using Adam Optimization
+                # (as opposed to simply learning_rate * gradient)
                 # https://arxiv.org/pdf/1412.6980.pdf
-                # http://cs231n.github.io/neural-networks-3/ (See Section: Per-parameter adaptive learning rate methods)
+                # http://cs231n.github.io/neural-networks-3/
+                # (See Section: Per-parameter adaptive learning rate methods)
                 m_weights = beta1 * m_weights + (1 - beta1) * gradient
                 mt_weights = m_weights / (1 - beta1 ** iteration)
                 v_weights = beta2 * v_weights + (1 - beta2) * (gradient ** 2)
@@ -262,7 +288,8 @@ class RidgeRegression:
         return self
 
     def predict(self, features):
-        """Predict the class labels for the provided data
+        """
+        Predict the class labels for the provided data
 
         Parameters
         ----------
@@ -281,4 +308,3 @@ class RidgeRegression:
         predictions = np.dot(features, self.weights)
 
         return predictions
-

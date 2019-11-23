@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 
 
@@ -25,4 +27,3 @@ def mean_squared_error(features, target, weights):
     mse = (1 / (2 * N)) * np.sum(loss ** 2)
 
     return mse
-

@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
+
 import numpy as np
 from npml.math.activations import sigmoid, softmax
 from npml.util.metrics import log_loss
 
 
 class BinaryLogisticRegression:
-    """Classifier implementing binary logistic regression
+    """
+    Classifier implementing binary logistic regression
 
     Uses a batch gradient descent optimization approach
 
@@ -23,14 +26,14 @@ class BinaryLogisticRegression:
         "Adam" = Adam Optimization
 
     tol : float, optional (default = 1e-3)
-        The stopping criterion. If it is not None, the iterations will stop when (loss > previous_loss - tol).
+        The stopping criterion. If it is not None, the iterations will stop when
+        (loss > previous_loss - tol).
 
     verbose : int, optional (default = 0)
         Any number larger than 0 prints actions verbosely
 
     Notes
     -----
-
     https://en.wikipedia.org/wiki/Logistic_regression
     """
 
@@ -49,7 +52,8 @@ class BinaryLogisticRegression:
         self.weights = []
 
     def fit(self, features, target):
-        """Fit model to training data
+        """
+        Fit model to training data
 
         Parameters
         ----------
@@ -75,10 +79,13 @@ class BinaryLogisticRegression:
         # Initialize weights
         self.weights = np.zeros(features.shape[1])
         if self.optimization == 'Adam':
-            m_weights = np.zeros_like(self.weights)  # first-moment vector Adam Optimization for W1
-            v_weights = np.zeros_like(self.weights)  # second-moment vector Adam Optimization for W1
+            # first-moment vector Adam Optimization for W1
+            m_weights = np.zeros_like(self.weights)
+            # second-moment vector Adam Optimization for W1
+            v_weights = np.zeros_like(self.weights)
 
-        previous_loss = 100000  # Initialize Previous loss to a arbitrary high number to check for stopping
+        # Initialize Previous loss to a arbitrary high number to check for stopping
+        previous_loss = 100000
         stop = False
         iteration = 0
 
@@ -89,7 +96,8 @@ class BinaryLogisticRegression:
             predictions = sigmoid(scores)
 
             # Compute gradient
-            # The gradient for Logistic Regression is the derivative of log loss (Negative Log-Likelihood)
+            # The gradient for Logistic Regression is the derivative of log loss
+            # (Negative Log-Likelihood)
             # Note: Calculating gradient for Binary and Multi-Class is different
             gradient = -np.dot(features.T, target - predictions)
 
@@ -99,9 +107,11 @@ class BinaryLogisticRegression:
                 beta1 = 0.9
                 beta2 = 0.999
                 eps = 1E-8
-                # Update weights by using Adam Optimization (as opposed to simply learning_rate * gradient)
+                # Update weights by using Adam Optimization
+                # (as opposed to simply learning_rate * gradient)
                 # https://arxiv.org/pdf/1412.6980.pdf
-                # http://cs231n.github.io/neural-networks-3/ (See Section: Per-parameter adaptive learning rate methods)
+                # http://cs231n.github.io/neural-networks-3/
+                # (See Section: Per-parameter adaptive learning rate methods)
                 m_weights = beta1 * m_weights + (1 - beta1) * gradient
                 mt_weights = m_weights / (1 - beta1 ** iteration)
                 v_weights = beta2 * v_weights + (1 - beta2) * (gradient ** 2)
@@ -126,7 +136,8 @@ class BinaryLogisticRegression:
         return self
 
     def predict(self, features):
-        """Predict the class labels for the provided data
+        """
+        Predict the class labels for the provided data
 
         Parameters
         ----------
@@ -169,17 +180,16 @@ class SoftmaxRegression:
         "Adam" = Adam Optimization
 
     tol : float, optional (default = 1e-3)
-        The stopping criterion. If it is not None, the iterations will stop when (loss > previous_loss - tol).
+        The stopping criterion. If it is not None, the iterations will stop when
+        (loss > previous_loss - tol).
 
     verbose : int, optional (default = 0)
         Any number larger than 0 prints actions verbosely
 
     Notes
     -----
-
     https://en.wikipedia.org/wiki/Multinomial_logistic_regression
     """
-
 
     def __init__(self,
                  fit_intercept=True,
@@ -196,7 +206,8 @@ class SoftmaxRegression:
         self.weights = []
 
     def fit(self, features, target):
-        """Fit model to training data
+        """
+        Fit model to training data
 
         Parameters
         ----------
@@ -222,8 +233,10 @@ class SoftmaxRegression:
         # Init weights
         self.weights = np.zeros([features.shape[1], len(np.unique(target))])
         if self.optimization == 'Adam':
-            m_weights = np.zeros_like(self.weights)  # first-moment vector Adam Optimization for W1
-            v_weights = np.zeros_like(self.weights)  # second-moment vector Adam Optimization for W1
+            # first-moment vector Adam Optimization for W1
+            m_weights = np.zeros_like(self.weights)
+            # second-moment vector Adam Optimization for W1
+            v_weights = np.zeros_like(self.weights)
 
         # Get number of training examples for the gradient descent update
         m = features.shape[0]
@@ -233,7 +246,8 @@ class SoftmaxRegression:
         target_onehot[np.arange(target.size), target] = 1
         target = target_onehot
 
-        previous_loss = 100000  # Initialize Previous loss to a arbitrary high number to check for stopping
+        # Initialize Previous loss to a arbitrary high number to check for stopping
+        previous_loss = 100000
         stop = False
         iteration = 0
 
@@ -244,7 +258,8 @@ class SoftmaxRegression:
             predictions = softmax(scores)
 
             # Compute gradient
-            # The gradient for Logistic Regression is the derivative of log loss (Negative Log-Likelihood)
+            # The gradient for Logistic Regression is the derivative of log loss
+            # (Negative Log-Likelihood)
             # Note: Calculating gradient for Binary and Multi-Class is different
             gradient = (-1 / m) * np.dot(features.T, (target - predictions))
 
@@ -254,9 +269,11 @@ class SoftmaxRegression:
                 beta1 = 0.9
                 beta2 = 0.999
                 eps = 1E-8
-                # Update weights by using Adam Optimization (as opposed to simply learning_rate * gradient)
+                # Update weights by using Adam Optimization
+                # (as opposed to simply learning_rate * gradient)
                 # https://arxiv.org/pdf/1412.6980.pdf
-                # http://cs231n.github.io/neural-networks-3/ (See Section: Per-parameter adaptive learning rate methods)
+                # http://cs231n.github.io/neural-networks-3/
+                # (See Section: Per-parameter adaptive learning rate methods)
                 m_weights = beta1 * m_weights + (1 - beta1) * gradient
                 mt_weights = m_weights / (1 - beta1 ** iteration)
                 v_weights = beta2 * v_weights + (1 - beta2) * (gradient ** 2)
@@ -279,7 +296,8 @@ class SoftmaxRegression:
                     print("Stopping Criterion Reached.")
 
     def predict(self, features):
-        """Predict the class labels for the provided data
+        """
+        Predict the class labels for the provided data
 
         Parameters
         ----------
