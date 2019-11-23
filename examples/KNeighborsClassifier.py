@@ -8,10 +8,10 @@ from sklearn.metrics import accuracy_score
 
 import pandas as pd
 
-# yamlfs implementations
+# npml implementations
 import sys
 sys.path.append("..")
-from yamlfs.supervised import k_neighbors_classifier
+from npml.supervised import k_neighbors_classifier
 
 # scikit implementations
 from sklearn import neighbors
@@ -43,14 +43,14 @@ test_df = pd.concat([X_test, y_test], axis=1)
 ### K-Nearest Neighbors
 print("**KNeighborsClassifier**")
 
-# yamlfs
+# npml
 start_time = timeit.default_timer()
-knn_yamlfs = k_neighbors_classifier.KNeighborsClassifier(neighbors=5)
-knn_yamlfs.fit(X_train, y_train)
-pred_knn_yamlfs = knn_yamlfs.predict(X_test)
+knn_npml = k_neighbors_classifier.KNeighborsClassifier(neighbors=5)
+knn_npml.fit(X_train, y_train)
+pred_knn_npml = knn_npml.predict(X_test)
 elapsed = timeit.default_timer() - start_time
 
-print('yamlfs Accuracy: ' + str(accuracy_score(y_test, pred_knn_yamlfs)))
+print('npml Accuracy: ' + str(accuracy_score(y_test, pred_knn_npml)))
 print('Time Elapsed: ' + str(elapsed))
 
 # scikit

@@ -8,10 +8,10 @@ from sklearn.metrics import mean_squared_error
 import pandas as pd
 import numpy as np
 
-# yamlfs implementations
+# npml implementations
 import sys
 sys.path.append("..")
-from yamlfs.supervised import linear_regression
+from npml.supervised import linear_regression
 
 # scikit implementations
 from sklearn import linear_model
@@ -32,14 +32,14 @@ test_df = pd.concat([X_test, y_test], axis=1)
 ### Linear Regression
 print("**Linear Regression**")
 
-# yamlfs
+# npml
 start_time = timeit.default_timer()
-lr_yamlfs = linear_regression.LinearRegression(optimization='Adam', verbose=1)
-lr_yamlfs.fit(X_train, y_train)
-pred_lr_yamlfs = lr_yamlfs.predict(X_test)
+lr_npml = linear_regression.LinearRegression(optimization='Adam', verbose=1)
+lr_npml.fit(X_train, y_train)
+pred_lr_npml = lr_npml.predict(X_test)
 elapsed = timeit.default_timer() - start_time
 
-print('yamlfs MSE: ' + str(mean_squared_error(y_test, pred_lr_yamlfs)))
+print('npml MSE: ' + str(mean_squared_error(y_test, pred_lr_npml)))
 print('Time Elapsed: ' + str(elapsed))
 
 # scikit

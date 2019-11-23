@@ -8,10 +8,10 @@ from sklearn.metrics import mean_squared_error
 import pandas as pd
 import numpy as np
 
-# yamlfs implementations
+# npml implementations
 import sys
 sys.path.append("..")
-from yamlfs.supervised import linear_regression
+from npml.supervised import linear_regression
 
 # scikit implementations
 from sklearn import linear_model
@@ -32,14 +32,14 @@ test_df = pd.concat([X_test, y_test], axis=1)
 ### Ridge Regression
 print("**Ridge Regression**")
 
-# yamlfs
+# npml
 start_time = timeit.default_timer()
-rr_yamlfs = linear_regression.RidgeRegression(optimization='Adam', verbose=1)
-rr_yamlfs.fit(X_train, y_train)
-pred_rr_yamlfs = rr_yamlfs.predict(X_test)
+rr_npml = linear_regression.RidgeRegression(optimization='Adam', verbose=1)
+rr_npml.fit(X_train, y_train)
+pred_rr_npml = rr_npml.predict(X_test)
 elapsed = timeit.default_timer() - start_time
 
-print('yamlfs MSE: ' + str(mean_squared_error(y_test, pred_rr_yamlfs)))
+print('npml MSE: ' + str(mean_squared_error(y_test, pred_rr_npml)))
 print('Time Elapsed: ' + str(elapsed))
 
 # scikit

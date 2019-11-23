@@ -8,10 +8,10 @@ from sklearn.metrics import accuracy_score
 
 import pandas as pd
 
-# yamlfs implementations
+# npml implementations
 import sys
 sys.path.append("..")
-from yamlfs.supervised import logistic_regression
+from npml.supervised import logistic_regression
 
 # scikit implementations
 from sklearn import linear_model
@@ -28,23 +28,23 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 train_df = pd.concat([X_train, y_train], axis=1)
 test_df = pd.concat([X_test, y_test], axis=1)
 
-### Binary Logistic Regression
+# Binary Logistic Regression
 print("**Binary Logistic Regression**")
 
-# yamlfs
+# npml
 start_time = timeit.default_timer()
-lr_yamlfs = logistic_regression.BinaryLogisticRegression(optimization='Adam', verbose=1)
-lr_yamlfs.fit(X_train, y_train)
-pred_lr_yamlfs = lr_yamlfs.predict(X_test)
+lr_npml = logistic_regression.BinaryLogisticRegression(optimization='Adam', verbose=1)
+lr_npml.fit(X_train, y_train)
+pred_lr_npml = lr_npml.predict(X_test)
 elapsed = timeit.default_timer() - start_time
 
-print('yamlfs Accuracy: ' + str(accuracy_score(y_test, pred_lr_yamlfs)))
+print('npml Accuracy: ' + str(accuracy_score(y_test, pred_lr_npml)))
 print('Time Elapsed: ' + str(elapsed))
 
 # scikit
 """
-I am using a gradient descent optimization method. SKLearn uses the liblinear solver, which has a different and 
-much faster optimization technique.
+I am using a gradient descent optimization method. SKLearn uses the liblinear solver, which has a
+different and much faster optimization technique.
 """
 
 start_time = timeit.default_timer()

@@ -8,10 +8,10 @@ from sklearn.metrics import accuracy_score
 
 import pandas as pd
 
-# yamlfs implementations
+# npml implementations
 import sys
 sys.path.append("..")
-from yamlfs.supervised import logistic_regression
+from npml.supervised import logistic_regression
 
 # scikit implementations
 from sklearn import linear_model
@@ -31,14 +31,14 @@ test_df = pd.concat([X_test, y_test], axis=1)
 ### Softmax Regression
 print("**Softmax Regression**")
 
-# yamlfs
+# npml
 start_time = timeit.default_timer()
-sr_yamlfs = logistic_regression.SoftmaxRegression(optimization='Adam', verbose=1)
-sr_yamlfs.fit(X_train, y_train)
-pred_sr_yamlfs = sr_yamlfs.predict(X_test)
+sr_npml = logistic_regression.SoftmaxRegression(optimization='Adam', verbose=1)
+sr_npml.fit(X_train, y_train)
+pred_sr_npml = sr_npml.predict(X_test)
 elapsed = timeit.default_timer() - start_time
 
-print('yamlfs Accuracy: ' + str(accuracy_score(y_test, pred_sr_yamlfs)))
+print('npml Accuracy: ' + str(accuracy_score(y_test, pred_sr_npml)))
 print('Time Elapsed: ' + str(elapsed))
 
 # scikit
