@@ -1,4 +1,3 @@
-# No Packages Machine Learning [![Actions Status](https://github.com/mcminnra/npml/workflows/NPML Python Package/badge.svg)](https://github.com/mcminnra/npml/actions)
-
+# No Packages Machine Learning ![](https://github.com/mcminnra/npml/workflows/NPML%20Python%20Package/badge.svg)
 
 Data Science and Machine Learning library written (almost) entirely without packages. The goal is to implement various utilities, algorithms, and other useful tools without the use of common ML & AI libraries like Scikit, Tensorflow, etc. Any function that doesn't come from the Python Standard Library is expected to be explictly implemented eventually in the library. The exception to this is if a function is intended to be a utility for a popular library purposely. We use Pandas for underlying data manipulation and Numpy/Scipy for optimized mathematical operations to avoid having to re-write literally everything. Our API will conform to the Scikit API when applicable to try and introduce compatability with various tools. This package is meant to be a learning opportunity, and will often not meet up to performance expectations when compared to other popular ML packages. 
