@@ -1,7 +1,6 @@
-.PHONY: install clean lint test
+.PHONY: install clean lint test wheel
 
 install:
-	#python setup.py install --force
 	pip install -e .
 
 clean:
