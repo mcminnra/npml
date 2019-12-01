@@ -9,8 +9,6 @@ from sklearn.metrics import accuracy_score
 import pandas as pd
 
 # npml implementations
-import sys
-sys.path.append("..")
 from npml.supervised import logistic_regression
 
 # scikit implementations
@@ -28,12 +26,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 train_df = pd.concat([X_train, y_train], axis=1)
 test_df = pd.concat([X_test, y_test], axis=1)
 
-### Softmax Regression
+# Softmax Regression
 print("**Softmax Regression**")
 
 # npml
 start_time = timeit.default_timer()
-sr_npml = logistic_regression.SoftmaxRegression(optimization='Adam', verbose=1)
+sr_npml = logistic_regression.SoftmaxRegression(optimization='radam', verbose=1)
 sr_npml.fit(X_train, y_train)
 pred_sr_npml = sr_npml.predict(X_test)
 elapsed = timeit.default_timer() - start_time
@@ -43,8 +41,8 @@ print('Time Elapsed: ' + str(elapsed))
 
 # scikit
 """
-I am using a gradient descent optimization method. SKLearn uses the liblinear solver, which has a different and 
-much faster optimization technique.
+I am using a gradient descent optimization method. SKLearn uses the liblinear solver, which has a
+different and much faster optimization technique.
 """
 
 start_time = timeit.default_timer()

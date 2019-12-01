@@ -45,7 +45,7 @@ class LinearRegression:
                  verbose=0):
         self.fit_intercept = fit_intercept
         self.learning_rate = learning_rate
-        self.optimization = optimization
+        self.optimization = optimization.lower() if isinstance(optimization, str) else optimization
         self.tol = tol
         self.verbose = verbose
 
@@ -101,6 +101,10 @@ class LinearRegression:
             v = np.zeros_like(self.weights)
             # Maximum length of approximated SMA
             p_inf = 2 / ((1-beta2)-1)
+
+        # Print settings if verbose
+        if self.verbose > 0:
+            print(f'Optimization: {self.optimization}')
 
         # Initialize Previous loss to a arbitrary high number to check for stopping
         previous_loss = 100000
@@ -189,7 +193,7 @@ class LinearRegression:
 
 class RidgeRegression:
     """
-Classifier implementing simple ridge regression
+    Classifier implementing simple ridge regression
 
     Uses a batch gradient descent optimization approach
 
@@ -230,7 +234,7 @@ Classifier implementing simple ridge regression
         self.fit_intercept = fit_intercept
         self.learning_rate = learning_rate
         self.alpha = alpha
-        self.optimization = optimization
+        self.optimization = optimization.lower() if isinstance(optimization, str) else optimization
         self.tol = tol
         self.verbose = verbose
 
@@ -286,6 +290,10 @@ Classifier implementing simple ridge regression
             v = np.zeros_like(self.weights)
             # Maximum length of approximated SMA
             p_inf = 2 / ((1-beta2)-1)
+
+        # Print settings if verbose
+        if self.verbose > 0:
+            print(f'Optimization: {self.optimization}')
 
         # Initialize Previous loss to a arbitrary high number to check for stopping
         previous_loss = 100000

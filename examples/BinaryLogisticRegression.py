@@ -9,8 +9,6 @@ from sklearn.metrics import accuracy_score
 import pandas as pd
 
 # npml implementations
-import sys
-sys.path.append("..")
 from npml.supervised import logistic_regression
 
 # scikit implementations
@@ -33,7 +31,7 @@ print("**Binary Logistic Regression**")
 
 # npml
 start_time = timeit.default_timer()
-lr_npml = logistic_regression.BinaryLogisticRegression(optimization='Adam', verbose=1)
+lr_npml = logistic_regression.BinaryLogisticRegression(optimization='radam', verbose=1)
 lr_npml.fit(X_train, y_train)
 pred_lr_npml = lr_npml.predict(X_test)
 elapsed = timeit.default_timer() - start_time

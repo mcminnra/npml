@@ -19,11 +19,12 @@ class BinaryLogisticRegression:
     learning_rate : float, optional (default = 5e-5)
         Learning rate for gradient descent
 
-    optimization : str, optional "Adam" or None (default = None)
+    optimization : str, optional "adam", 'radam', or None (default = None)
         Optimization method to use for gradient descent
 
         None   = Normal Gradient Descent Update
-        "Adam" = Adam Optimization
+        "adam" = Adam Optimization
+        "radam" = Rectified Adam Optimization
 
     tol : float, optional (default = 1e-3)
         The stopping criterion. If it is not None, the iterations will stop when
@@ -45,7 +46,7 @@ class BinaryLogisticRegression:
                  verbose=0):
         self.fit_intercept = fit_intercept
         self.learning_rate = learning_rate
-        self.optimization = optimization
+        self.optimization = optimization.lower() if isinstance(optimization, str) else optimization
         self.tol = tol
         self.verbose = verbose
 
@@ -78,11 +79,30 @@ class BinaryLogisticRegression:
 
         # Initialize weights
         self.weights = np.zeros(features.shape[1])
-        if self.optimization == 'Adam':
+        if self.optimization == 'adam':
+            # Constants for Adam Optimization (values are paper recommended values)
+            beta1 = 0.9
+            beta2 = 0.999
+            eps = 1E-8
             # first-moment vector Adam Optimization for W1
-            m_weights = np.zeros_like(self.weights)
+            m = np.zeros_like(self.weights)
             # second-moment vector Adam Optimization for W1
-            v_weights = np.zeros_like(self.weights)
+            v = np.zeros_like(self.weights)
+        elif self.optimization == 'radam':
+            # Constants for Rectified Adam Optimization (values are paper recommended values)
+            beta1 = 0.9
+            beta2 = 0.999
+            eps = 1E-8
+            # first-moment vector Rectified Adam Optimization for W1
+            m = np.zeros_like(self.weights)
+            # second-moment vector Recified Adam Optimization for W1
+            v = np.zeros_like(self.weights)
+            # Maximum length of approximated SMA
+            p_inf = 2 / ((1-beta2)-1)
+
+        # Print settings if verbose
+        if self.verbose > 0:
+            print(f'Optimization: {self.optimization}')
 
         # Initialize Previous loss to a arbitrary high number to check for stopping
         previous_loss = 100000
@@ -102,21 +122,36 @@ class BinaryLogisticRegression:
             gradient = -np.dot(features.T, target - predictions)
 
             # Update Weights
-            if self.optimization == 'Adam':
-                # Constants for Adam Optimization (values are paper recommended values)
-                beta1 = 0.9
-                beta2 = 0.999
-                eps = 1E-8
+            if self.optimization == 'adam':
                 # Update weights by using Adam Optimization
                 # (as opposed to simply learning_rate * gradient)
                 # https://arxiv.org/pdf/1412.6980.pdf
                 # http://cs231n.github.io/neural-networks-3/
                 # (See Section: Per-parameter adaptive learning rate methods)
-                m_weights = beta1 * m_weights + (1 - beta1) * gradient
-                mt_weights = m_weights / (1 - beta1 ** iteration)
-                v_weights = beta2 * v_weights + (1 - beta2) * (gradient ** 2)
-                vt_weights = v_weights / (1 - beta2 ** iteration)
-                self.weights += -self.learning_rate * mt_weights / (np.sqrt(vt_weights) + eps)
+                m = beta1 * m + (1 - beta1) * gradient
+                mt = m / (1 - beta1 ** iteration)
+                v = beta2 * v + (1 - beta2) * (gradient ** 2)
+                vt = v / (1 - beta2 ** iteration)
+                self.weights += -self.learning_rate * mt / (np.sqrt(vt) + eps)
+            elif self.optimization == 'radam':
+                # Update exponetial 1st and 2nd moment
+                m = beta1 * m + (1 - beta1) * gradient
+                v = beta2 * v + (1 - beta2) * (gradient ** 2)
+                # Compute bias-corrected moving average
+                mt = m / (1 - beta1 ** iteration)
+                # Compute length of the approximated SMA
+                pt = p_inf - ((2 * iteration * (beta2 ** iteration)) / (1 - (beta2 ** iteration)))
+                # if variance is tractable, updated with adapative momentum, else unadapated
+                if pt > 4:
+                    # Compute bias-corrected moving 2nd moment
+                    vt = v / (1 - beta2 ** iteration)
+                    # Compute variance rectification term
+                    rt = np.sqrt(((pt-4)(pt-2)(p_inf))/((p_inf-4)(p_inf-2)(pt)))
+                    # Update weights with adaptive momentum
+                    self.weights += -self.learning_rate * rt * mt / vt
+                else:
+                    # Update weights with un-adapted momentum
+                    self.weights += -self.learning_rate * mt
             else:
                 self.weights -= self.learning_rate * gradient
 
@@ -173,11 +208,12 @@ class SoftmaxRegression:
     learning_rate : float, optional (default = 5e-5)
         Learning rate for gradient descent
 
-    optimization : str, optional "Adam" or None (default = None)
+    optimization : str, optional "adam", 'radam', or None (default = None)
         Optimization method to use for gradient descent
 
         None   = Normal Gradient Descent Update
-        "Adam" = Adam Optimization
+        "adam" = Adam Optimization
+        "radam" = Rectified Adam Optimization
 
     tol : float, optional (default = 1e-3)
         The stopping criterion. If it is not None, the iterations will stop when
@@ -199,7 +235,7 @@ class SoftmaxRegression:
                  verbose=0):
         self.fit_intercept = fit_intercept
         self.learning_rate = learning_rate
-        self.optimization = optimization
+        self.optimization = optimization.lower() if isinstance(optimization, str) else optimization
         self.tol = tol
         self.verbose = verbose
 
@@ -230,16 +266,35 @@ class SoftmaxRegression:
             intercept = np.ones((features.shape[0], 1))
             features = np.hstack((intercept, features))
 
+        # Get number of training examples for the gradient descent update
+        num_rows = features.shape[0]
+
         # Init weights
         self.weights = np.zeros([features.shape[1], len(np.unique(target))])
-        if self.optimization == 'Adam':
+        if self.optimization == 'adam':
+            # Constants for Adam Optimization (values are paper recommended values)
+            beta1 = 0.9
+            beta2 = 0.999
+            eps = 1E-8
             # first-moment vector Adam Optimization for W1
-            m_weights = np.zeros_like(self.weights)
+            m = np.zeros_like(self.weights)
             # second-moment vector Adam Optimization for W1
-            v_weights = np.zeros_like(self.weights)
+            v = np.zeros_like(self.weights)
+        elif self.optimization == 'radam':
+            # Constants for Rectified Adam Optimization (values are paper recommended values)
+            beta1 = 0.9
+            beta2 = 0.999
+            eps = 1E-8
+            # first-moment vector Rectified Adam Optimization for W1
+            m = np.zeros_like(self.weights)
+            # second-moment vector Recified Adam Optimization for W1
+            v = np.zeros_like(self.weights)
+            # Maximum length of approximated SMA
+            p_inf = 2 / ((1-beta2)-1)
 
-        # Get number of training examples for the gradient descent update
-        m = features.shape[0]
+        # Print settings if verbose
+        if self.verbose > 0:
+            print(f'Optimization: {self.optimization}')
 
         # One-Hot encode target
         target_onehot = np.zeros((target.size, target.max() + 1))
@@ -261,24 +316,40 @@ class SoftmaxRegression:
             # The gradient for Logistic Regression is the derivative of log loss
             # (Negative Log-Likelihood)
             # Note: Calculating gradient for Binary and Multi-Class is different
-            gradient = (-1 / m) * np.dot(features.T, (target - predictions))
+            gradient = (-1 / num_rows) * np.dot(features.T, (target - predictions))
 
             # Update Weights
-            if self.optimization == 'Adam':
-                # Constants for Adam Optimization (values are paper recommended values)
-                beta1 = 0.9
-                beta2 = 0.999
-                eps = 1E-8
+            # Update Weights
+            if self.optimization == 'adam':
                 # Update weights by using Adam Optimization
                 # (as opposed to simply learning_rate * gradient)
                 # https://arxiv.org/pdf/1412.6980.pdf
                 # http://cs231n.github.io/neural-networks-3/
                 # (See Section: Per-parameter adaptive learning rate methods)
-                m_weights = beta1 * m_weights + (1 - beta1) * gradient
-                mt_weights = m_weights / (1 - beta1 ** iteration)
-                v_weights = beta2 * v_weights + (1 - beta2) * (gradient ** 2)
-                vt_weights = v_weights / (1 - beta2 ** iteration)
-                self.weights += -self.learning_rate * mt_weights / (np.sqrt(vt_weights) + eps)
+                m = beta1 * m + (1 - beta1) * gradient
+                mt = m / (1 - beta1 ** iteration)
+                v = beta2 * v + (1 - beta2) * (gradient ** 2)
+                vt = v / (1 - beta2 ** iteration)
+                self.weights += -self.learning_rate * mt / (np.sqrt(vt) + eps)
+            elif self.optimization == 'radam':
+                # Update expoential 1st and 2nd moment
+                m = beta1 * m + (1 - beta1) * gradient
+                v = beta2 * v + (1 - beta2) * (gradient ** 2)
+                # Compute bias-corrected moving average
+                mt = m / (1 - beta1 ** iteration)
+                # Compute length of the approximated SMA
+                pt = p_inf - ((2 * iteration * (beta2 ** iteration)) / (1 - (beta2 ** iteration)))
+                # if variance is tractable, updated with adapative momentum, else unadapated
+                if pt > 4:
+                    # Compute bias-corrected moving 2nd moment
+                    vt = v / (1 - beta2 ** iteration)
+                    # Compute variance rectification term
+                    rt = np.sqrt(((pt-4)(pt-2)(p_inf))/((p_inf-4)(p_inf-2)(pt)))
+                    # Update weights with adaptive momentum
+                    self.weights += -self.learning_rate * rt * mt / vt
+                else:
+                    # Update weights with un-adapted momentum
+                    self.weights += -self.learning_rate * mt
             else:
                 self.weights -= self.learning_rate * gradient
 
