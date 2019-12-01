@@ -9,8 +9,6 @@ import pandas as pd
 import numpy as np
 
 # npml implementations
-import sys
-sys.path.append("..")
 from npml.supervised import linear_regression
 
 # scikit implementations
@@ -29,12 +27,12 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 train_df = pd.concat([X_train, y_train], axis=1)
 test_df = pd.concat([X_test, y_test], axis=1)
 
-### Ridge Regression
+# Ridge Regression
 print("**Ridge Regression**")
 
 # npml
 start_time = timeit.default_timer()
-rr_npml = linear_regression.RidgeRegression(optimization='Adam', verbose=1)
+rr_npml = linear_regression.RidgeRegression(optimization='radam', verbose=1)
 rr_npml.fit(X_train, y_train)
 pred_rr_npml = rr_npml.predict(X_test)
 elapsed = timeit.default_timer() - start_time
@@ -44,8 +42,8 @@ print('Time Elapsed: ' + str(elapsed))
 
 # scikit
 """
-I am using a gradient descent optimization method. SKLearn uses the liblinear solver, which has a different and 
-much faster optimization technique.
+I am using a gradient descent optimization method. SKLearn uses the liblinear solver, which has a
+different and much faster optimization technique.
 """
 
 start_time = timeit.default_timer()

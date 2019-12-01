@@ -9,8 +9,6 @@ from sklearn.metrics import accuracy_score
 import pandas as pd
 
 # npml implementations
-import sys
-sys.path.append("..")
 from npml.supervised import k_neighbors_classifier
 
 # scikit implementations
@@ -40,7 +38,7 @@ train_df = pd.concat([X_train, y_train], axis=1)
 test_df = pd.concat([X_test, y_test], axis=1)
 
 
-### K-Nearest Neighbors
+# K-Nearest Neighbors
 print("**KNeighborsClassifier**")
 
 # npml
