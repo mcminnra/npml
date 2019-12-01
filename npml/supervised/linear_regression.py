@@ -32,6 +32,10 @@ class LinearRegression:
     verbose : int, optional (default = 0)
         Any number larger than 0 prints actions verbosely
 
+    output_freq: int, optional (default = 10000)
+        The iteration frequency to print an error message. Only displays if verbose is greater
+        than 0.
+
     Notes
     -----
     https://en.wikipedia.org/wiki/Linear_regression
@@ -42,12 +46,14 @@ class LinearRegression:
                  learning_rate=5e-5,
                  optimization=None,
                  tol=0,
-                 verbose=0):
+                 verbose=0,
+                 output_freq=10000):
         self.fit_intercept = fit_intercept
         self.learning_rate = learning_rate
         self.optimization = optimization.lower() if isinstance(optimization, str) else optimization
         self.tol = tol
         self.verbose = verbose
+        self.output_freq = output_freq
 
         self.weights = []
 
@@ -162,7 +168,7 @@ class LinearRegression:
                 previous_loss = loss
 
             # Verbose Output
-            if self.verbose > 0:
+            if self.verbose > 0 and iteration % self.output_freq == 0:
                 print("Iteration: {0}, MSE: {1}".format(iteration, loss))
                 if stop:
                     print("Stopping Criterion Reached.")
@@ -219,6 +225,10 @@ class RidgeRegression:
     verbose : int, optional (default = 0)
         Any number larger than 0 prints actions verbosely
 
+    output_freq: int, optional (default = 10000)
+        The iteration frequency to print an error message. Only displays if verbose is greater
+        than 0.
+
     Notes
     -----
     https://en.wikipedia.org/wiki/Linear_regression
@@ -230,13 +240,15 @@ class RidgeRegression:
                  alpha=.0001,
                  optimization=None,
                  tol=0,
-                 verbose=0):
+                 verbose=0,
+                 output_freq=10000):
         self.fit_intercept = fit_intercept
         self.learning_rate = learning_rate
         self.alpha = alpha
         self.optimization = optimization.lower() if isinstance(optimization, str) else optimization
         self.tol = tol
         self.verbose = verbose
+        self.output_freq = output_freq
 
         self.weights = []
 
@@ -353,7 +365,7 @@ class RidgeRegression:
                 previous_loss = loss
 
             # Verbose Output
-            if self.verbose > 0:
+            if self.verbose > 0 and iteration % self.output_freq == 0:
                 print("Iteration: {0}, MSE: {1}".format(iteration, loss))
                 if stop:
                     print("Stopping Criterion Reached.")
